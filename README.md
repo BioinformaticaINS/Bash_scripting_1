@@ -232,11 +232,11 @@ export PATH=$PATH:/home/ins_user/sra_tools/bin
 
 Para tener el directorio al final del PATH:
 
-`export PATH=$PATH:/home/paula.soler/sra_tools/bin`
+`export PATH=$PATH:/home/ins_user/sra_tools/bin`
 
 Para tener el directorio al inicio del PATH:
 
-`export PATH=/home/paula.soler/sra_tools/bin:$PATH`
+`export PATH=/home/ins_user/sra_tools/bin:$PATH`
 
 ## 3. Interaccionando con SHELL y SUBSHELLs
 
