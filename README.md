@@ -1,6 +1,7 @@
 # Bash scripting 1
 
 ## **Objetivo de la Clase:**
+
 Al finalizar la clase, los estudiantes serán capaces de:
 1. Comprender los conceptos básicos de Shell scripting.
 2. Automatizar tareas comunes en bioinformática, como la descarga y procesamiento de datos.
@@ -10,23 +11,203 @@ Al finalizar la clase, los estudiantes serán capaces de:
 ### **1. Introducción a la Programación en Shell**
 
 #### **1.1. ¿Qué es Shell?**
+
 - **Definición:** El Shell es un intérprete de comandos que actúa como interfaz entre el usuario y el kernel del sistema operativo.
 - **Funcionalidad:** Permite ejecutar comandos, automatizar tareas y gestionar procesos.
 
 ![](https://i.sstatic.net/LBRdx.png)
 
 #### **1.2. Tipos de Shell**
+
 - **Bourne Shell (sh):** La primera Shell tradicional de UNIX.
 - **Korn Shell (ksh):** Amplía el Shell del sistema con características como historial de comandos y edición en línea.
 - **Bourne Again Shell (bash):** El Shell más moderno y utilizado, desarrollado para el Proyecto GNU.
 - **C Shell (csh):** Popular en sistemas BSD, diseñado para programadores en C.
 - **Tenex C Shell (tcsh):** Mejora de csh con mayor velocidad y funcionalidades.
 
+```bash
+more /etc/shells
 
-## **1. ¿Qué es Shell Scripting?**
-- **Definición:** Un script de Shell es un archivo que contiene una serie de comandos que se ejecutan en secuencia.
-- **Aplicación en Bioinformática:** Automatización de tareas repetitivas, como la descarga de datos, procesamiento de secuencias, y análisis de datos.
+# Si deseamos instalar un Shell usamos la línea de comandos: sudo apt install <shell>.
+```
+
+¿Cuál es mi Shell?
+
+```bash
+echo $SHELL
+```
+
+¿Cuál es la versión de la shell ?
+
+```bash
+echo $BASH_VERSION
+```
+
+¿Puedo cambiar de Shell?
+
+Sí. ¿Cómo?
+
+```bash
+# Sintaxis: $chsh <opciones> <usuario>
+sudo chsh -s /bin/  # tabuleamos
+```
+
+#### **1.3. ¿Por qué usar Shell Scripting?**
+
+- Permite automatizar tareas repetitivas y así ahorrar tiempo.
+- Proporcionan una secuencia de actividades bien estructurada,modular y formateada.Un script es como una receta. 
+- Permite introducir **valores dinámicos** a los diferentes comandos mediante el uso de argumentos por la línea de comandos.
+
+```bash
+$ rev
+hola
+aloh
+user
+resu
+...
+```
+
+- Puede simplificar comandos complejos en una sola unidad en ejecución.
+- Una vez creado, se puede ejecutar cualquier cantidad de veces por cualquier persona.*“Construye una vez y ejecuta muchas veces”.*
+
+#### **1.4. Herramientas para Escribir Scripts**
+
+- **Editores de texto:** Visual Studio Code, Sublime Text, VIM, Pluma.
+- **Ejemplos de comandos básicos:** `rev`, `echo`, `pwd`.
+
+#### **1.5. Shebang**
+
+```
+#!/bin/bash --> La primera línea del script le indica al sistema que tiene que usar shell BASH
+
+#Fecha de escritura: 13/10/2022 --> Comentario  
+
+#Este programa te informa en que directorio se encuentra trabajando la terminal. --> Comentario
+
+lugar=$(pwd) # Variable
+
+echo "en este momento te encuentras trabajando en este $lugar, no vayas a perderte"
+```
+
+### **2. Variables en Shell Scripting
+
+#### **2.1. ¿Qué es una Variable?**
+
+- **Definición:** Una variable es una ubicación en memoria que almacena un valor.
+- **Sintaxis básica:** `variable=valor`.
+- **Características:** Dinámicas, modificables, y pueden almacenar múltiples tipos de datos.
+  
+```
+# Variable: Crear, Modificar, Guardar y Eliminar
+# Valor: Naturaleza múltiple, Dinámicos
+
+nomre = "usuario"
+edad = 44
+ruta_archivos = "home/insuser/Proyecto_NGS"
+```
+
+#### **2.2. Tipos de Variables**
+
+- **Variables Locales:** Accesibles solo en el Shell o sub-Shell donde se definieron.
+- **Variables Globales:** Accesibles desde cualquier Shell o sub-Shell.
+
+#### **2.3. Creación y Manipulación de Variables**
+
+- **Variables Locales:** Accesibles solo en el shell o sub-shell donde se definió.
+  
+  - Ejemplo: `mi_nombre="ins"`.
+  - Acceso: `echo $mi_nombre`.
+    
+- **Variables Globales:** Accesibles para cualquier en ejecución desde el shell o desde cualquier sub-shell generada a partir de ella.
+  
+  - Uso del comando `export`: `export saludo="Hola a todos"`.
+  - Eliminación: `unset saludo`.
+
+#### **2.4. Variables de Entorno Globales**
+
+- **Ejemplos comunes:**
+
+  - Las variables de entorno globales se establecen cuando se inicia una sesión.
+  - Por convención, se suelen definir en letras mayúsculas para diferenciarlas de las variables que define el usuario.
+  
+| Variable | Descripción                                                      |
+|----------|------------------------------------------------------------------|
+| DISPLAY  | Donde aparecen las salidas de X-Windows                          |
+| HOME     | Directorio personal                                              |
+| HOSTNAME | Nombre de la máquina                                             |
+| MAIL     | Archivo de correo                                                |
+| PATH     | Lista de directorio en donde buscará programas y comandos        |
+| PS1      | Prompt o indicador del shell que aparece en la línea de comandos |
+| SHELL    | Interprete de comandos por defecto                               |
+| TERM     | Tipo de terminal                                                 |
+| USER     | Nombre de usuario                                                |
+
+- **Cómo ver el contenido de una variable de entorno:** `echo $HOME` o `printenv HOME`
+
+- Comando `printenv`
+
+  ```
+  printenv | head
+  ```
+
+#### **2.5. Nomenclatura de Variables**
+
+- **Reglas:**
+  
+  - Solo caracteres alfanuméricos y guiones bajos (`_`).
+  - No pueden contener espacios.
+  - Sensibilidad a mayúsculas y minúsculas.
+    
+- **Convenciones:**
+  
+  - Variables de entorno en mayúsculas.
+  - Otras variables en minúsculas.
+
+#### **2.6. Expansión de Variables y Comandos**
+
+- **Expansión de comandos:**
+  
+  - Sintaxis: `$(comando)` o `` `comando` ``.
+  - Ejemplo: `user=$(whoami)`.
+    
+- **Operaciones aritméticas:**
+  
+  - Sintaxis: `$((expresión))`.
+  - Ejemplo: `suma=$((1+1))`.
+
+#### **2.7. Comillas Simples y Dobles**
+- **Comillas Dobles (`" "`):** Permiten la expansión de variables.
+- **Comillas Simples (`' '`):** Mantienen el valor literal, sin expansión.
+
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### **2. Creación de Scripts de Shell para Bioinformática**
 
