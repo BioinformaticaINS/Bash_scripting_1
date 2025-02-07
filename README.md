@@ -89,7 +89,7 @@ lugar=$(pwd) # Variable
 echo "en este momento te encuentras trabajando en este $lugar, no vayas a perderte"
 ```
 
-### **2. Variables en Shell Scripting
+### **2. Variables en Shell Scripting**
 
 #### **2.1. ¿Qué es una Variable?**
 
@@ -124,8 +124,6 @@ ruta_archivos = "home/insuser/Proyecto_NGS"
   - Eliminación: `unset saludo`.
 
 #### **2.4. Variables de Entorno Globales**
-
-- **Ejemplos comunes:**
 
   - Las variables de entorno globales se establecen cuando se inicia una sesión.
   - Por convención, se suelen definir en letras mayúsculas para diferenciarlas de las variables que define el usuario.
@@ -240,9 +238,9 @@ Para tener el directorio al inicio del PATH:
 
 `export PATH=/home/paula.soler/sra_tools/bin:$PATH`
 
-## Interaccionando con SHELL y SUBSHELLs
+## 3. Interaccionando con SHELL y SUBSHELLs
 
-### Uso del comando `bash`
+### 3.1. Uso del comando `bash`
 
 ```bash
 (base) ins_user@VirtualBox:~$                # Shell principal
@@ -257,7 +255,7 @@ Exit
 
 Dato: *No pensemos que una sub-shell como una nueva ventana de terminal*
 
-### Creando subshells anidadas
+### 3.2. Creando subshells anidadas
 
 ```bash
 (base) ins_user@VirtualBox:~$ export VAR=10
@@ -285,7 +283,7 @@ exit
 3. Puede cambiar el valor de la variable exportada en una subcapa. El valor modificado se pasará a las subcapas posteriores, pero si sale y vuelve a la capa original, se conserva el valor original.
 
 
-### Comparando variables locales Vs. globales 
+### 3.3. Comparando variables locales Vs. globales 
 
 ```bash
 (base) ins_user@VirtualBox:~$ drink="tea"
@@ -303,7 +301,7 @@ tea
 (base) ins_user@VirtualBox:~$ exit
 ```
 
-### Scripts en la subshell
+### 3.4. Scripts en la subshell
 
 ```bash
 (base) ins_user@VirtualBox:~$ cat impresion.sh
@@ -334,15 +332,16 @@ echo $var
 ```
 ---
 
-### **2. Creación de Scripts de Shell para Bioinformática**
+## **4. Creación de Scripts de Shell para Bioinformática**
 
-#### **2.1. Estructura de un Script de Shell**
+### **4.1. Estructura de un Script de Shell**
+
 - **Shebang:** `#!/bin/bash`.
 - **Comentarios:** `# Esto es un comentario`.
 - **Variables:** `ruta="/ruta/al/directorio"`.
 - **Ejecución de comandos:** `fastq-dump SRR123456`.
 
-#### **2.2. Ejemplo de Script para Descargar Datos de SRA**
+### **4.2. Ejemplo de Script para Descargar Datos de SRA**
 
 ```bash
 #!/bin/bash
@@ -352,7 +351,7 @@ fastq-dump --split-files -X 10000 $ID
 echo "Descarga completada: $ID.fastq"
 ```
 
-#### **2.3. Ejemplo de Script para Buscar y Descargar Datos de NCBI**
+### **4.3. Ejemplo de Script para Buscar y Descargar Datos de NCBI**
 
 ```bash
 #!/bin/bash
@@ -362,11 +361,8 @@ esearch -db nucleotide -query "$TERM" | efetch -format fasta > datos.fasta
 echo "Datos descargados: datos.fasta"
 ```
 
-### **3. Automatización de Tareas con Variables y Bucles**
+### **4.4. Automatización de Tareas con Variables y Bucles**
 
-#### **3.1. Uso de Variables en Scripts**
-
-- **Ejemplo:**
   ```bash
   #!/bin/bash
   ID="SRR1553607"
@@ -375,8 +371,8 @@ echo "Datos descargados: datos.fasta"
   echo "Archivo guardado en: $OUTPUT"
   ```
 
-#### **3.2. Uso de Bucles para Procesar Múltiples Archivos**
-- **Ejemplo:**
+#### **4.5. Uso de Bucles para Procesar Múltiples Archivos**
+
   ```bash
   #!/bin/bash
   # Descargar múltiples archivos FASTQ
@@ -387,7 +383,7 @@ echo "Datos descargados: datos.fasta"
   done
   ```
 
-#### **4.3. Ejemplo de Flujo de Trabajo Automatizado**
+#### **4.3. Flujo de Trabajo Automatizado**
 ```bash
 #!/bin/bash
 # Flujo de trabajo automatizado
