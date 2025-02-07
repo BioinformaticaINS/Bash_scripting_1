@@ -179,35 +179,160 @@ ruta_archivos = "home/insuser/Proyecto_NGS"
 - **Comillas Dobles (`" "`):** Permiten la expansión de variables.
 - **Comillas Simples (`' '`):** Mantienen el valor literal, sin expansión.
 
+```bash
+(base) ins_user@VirtualBox:~$var=10
+(base) ins_user@VirtualBox:~$echo "El valor de la variable $var"
+El valor de la variable 10
+(base) ins_user@VirtualBox:~$echo 'El valor de la variable $var'
+El valor de la variable $var
+```
+
+Ejericio:
+
+```
+(base) ins_user@VirtualBox:~$var=10
+
+El nombre de la varible es 10_1 
+```
+
+### **2.8. Variable de entorno PATH** 
+
+Los directorios en el PATH se encuentran separados por dos puntos (:)
+
+```bash
+(base) ins_user@VirtualBox:~$ printenv PATH
+/home/ins_user/miniconda3/bin:/home/ins_user/miniconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/go/bin:/home/ins_user/go/bin
+```
+
+
+```bash
+(base) ins_user@VirtualBox:~$ which pwd
+/usr/bin/pwd
+```
+
+ - Búsqueda secuencial.
+ - De no estar en ninguno de los directorios listados entonces se producirá un mensaje de error
+
+
+### **2.9. ¿Cómo agregamos un directorio al PATH?**
+
+```bash
+export PATH=$PATH:/ruta
+```
+
+Ejemplo:
+
+```bash
+export PATH=$PATH:/home/ins_user/sra_tools/bin
+```
+
+- `export`: Comando que nos permite crear o modificar una variable de entorno global.
+- `PATH`: Variable de entorno a crear o modificar.
+- `=`: Operador de asignación.
+- `$PATH`: Valor actual de la variable de entorno (antes de su modificación)
+- `:/home/ins_user/sra_tools/bin`: Ruta absoluta que agregamos a la variable de entorno PATH
+
+Para tener el directorio al final del PATH:
+
+`export PATH=$PATH:/home/paula.soler/sra_tools/bin`
+
+Para tener el directorio al inicio del PATH:
+
+`export PATH=/home/paula.soler/sra_tools/bin:$PATH`
+
+## Interaccionando con SHELL y SUBSHELLs
+
+### Uso del comando `bash`
+
+```bash
+(base) ins_user@VirtualBox:~$                # Shell principal
+(base) ins_user@VirtualBox:~$ bioinfo=9.25
+(base) ins_user@VirtualBox:~$ bash           # Shell secuendatio
+(base) ins_user@VirtualBox:~$ echo $bioinfo
+(base) ins_user@VirtualBox:~$ exit
+Exit
+(base) ins_user@VirtualBox:~$ echo $bioinfo
+9.25
+```
+
+Dato: *No pensemos que una sub-shell como una nueva ventana de terminal*
+
+### Creando subshells anidadas
+
+```bash
+(base) ins_user@VirtualBox:~$ export VAR=10
+(base) ins_user@VirtualBox:~$ bash
+(base) ins_user@VirtualBox:~$ echo $VAR
+10
+(base) ins_user@VirtualBox:~$ export VAR=20
+(base) ins_user@VirtualBox:~$ echo $VAR
+20
+(base) ins_user@VirtualBox:~$ bash
+(base) ins_user@VirtualBox:~$ echo $VAR
+20
+(base) ins_user@VirtualBox:~$ exit
+exit
+(base) ins_user@VirtualBox:~$ echo $VAR
+20
+(base) ins_user@VirtualBox:~$ exit
+exit
+(base) ins_user@VirtualBox:~$ echo $VAR
+10
+```
+
+1. Creación de subshells anidadas.
+2. Después de exportar una variable global, permanece exportada a todas las subcapas creadas posteriormente.
+3. Puede cambiar el valor de la variable exportada en una subcapa. El valor modificado se pasará a las subcapas posteriores, pero si sale y vuelve a la capa original, se conserva el valor original.
+
+
+### Comparando variables locales Vs. globales 
+
+```bash
+(base) ins_user@VirtualBox:~$ drink="tea"
+(base) ins_user@VirtualBox:~$ echo $drink
+tea
+(base) ins_user@VirtualBox:~$ bash # Abriendo una sub-shell
+(base) ins_user@VirtualBox:~$ echo $drink
+(base) ins_user@VirtualBox:~$ exit # ctrl + D
+(base) ins_user@VirtualBox:~$ echo $drink
+tea
+(base) ins_user@VirtualBox:~$ export drink
+$ bash
+$ printenv drink
+tea
+(base) ins_user@VirtualBox:~$ exit
+```
+
+### Scripts en la subshell
+
+```bash
+(base) ins_user@VirtualBox:~$ cat impresion.sh
+var=LHB
+echo $var
+(base) ins_user@VirtualBox:~$ bash impresion.sh
+LHB
+(base) ins_user@VirtualBox:~$ sh impresion.sh
+LHB
+```
+
+```bash
+(base) ins_user@VirtualBox:~$ cat impresion.sh
+echo $var
+(base) ins_user@VirtualBox:~$ var=LHB
+(base) ins_user@VirtualBox:~$ bash impresion.sh
+```
+
+** *Los scripts se ejecutan por defecto en una sub-shell* **
+
+```bash
+(base) ins_user@VirtualBox:~$ cat impresion.sh
+echo $var
+(base) ins_user@VirtualBox:~$ var=LHB
+(base) ins_user@VirtualBox:~$ bash impresion.sh
+
+(base) ins_user@VirtualBox:~$ .impresion.sh   # .script
+```
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ### **2. Creación de Scripts de Shell para Bioinformática**
 
@@ -218,15 +343,17 @@ ruta_archivos = "home/insuser/Proyecto_NGS"
 - **Ejecución de comandos:** `fastq-dump SRR123456`.
 
 #### **2.2. Ejemplo de Script para Descargar Datos de SRA**
+
 ```bash
 #!/bin/bash
 # Descargar un archivo FASTQ desde SRA
-ID="SRR123456"
-fastq-dump $ID
+ID="SRR1553607"
+fastq-dump --split-files -X 10000 $ID
 echo "Descarga completada: $ID.fastq"
 ```
 
 #### **2.3. Ejemplo de Script para Buscar y Descargar Datos de NCBI**
+
 ```bash
 #!/bin/bash
 # Buscar y descargar datos de NCBI
@@ -235,17 +362,16 @@ esearch -db nucleotide -query "$TERM" | efetch -format fasta > datos.fasta
 echo "Datos descargados: datos.fasta"
 ```
 
----
-
 ### **3. Automatización de Tareas con Variables y Bucles**
 
 #### **3.1. Uso de Variables en Scripts**
+
 - **Ejemplo:**
   ```bash
   #!/bin/bash
-  ID="SRR123456"
-  OUTPUT="resultados/$ID.fastq"
-  fastq-dump $ID -O $OUTPUT
+  ID="SRR1553607"
+  OUTPUT="raw_data/$ID.fastq"
+  fastq-dump --split-files -X 10000 $ID -O $OUTPUT
   echo "Archivo guardado en: $OUTPUT"
   ```
 
@@ -254,55 +380,22 @@ echo "Datos descargados: datos.fasta"
   ```bash
   #!/bin/bash
   # Descargar múltiples archivos FASTQ
-  for ID in SRR123456 SRR654321 SRR987654
+  for ID in SRR1972948 SRR1972956 SRR1972955
   do
-    fastq-dump $ID
+    fastq-dump --split-files -X 10000 $ID
     echo "Descargado: $ID.fastq"
   done
   ```
 
----
-
-### **4. Integración de Comandos Bioinformáticos en Scripts**
-
-#### **4.1. Ejemplo de Script para Procesar Datos con `bio`**
-```bash
-#!/bin/bash
-# Procesar datos con la herramienta bio
-INPUT="datos.fasta"
-OUTPUT="resultados/analisis.txt"
-bio analyze $INPUT > $OUTPUT
-echo "Análisis completado: $OUTPUT"
-```
-
-#### **4.2. Ejemplo de Script para Descargar y Procesar Datos**
-```bash
-#!/bin/bash
-# Descargar y procesar datos
-ID="SRR123456"
-fastq-dump $ID
-bio analyze $ID.fastq > analisis_$ID.txt
-echo "Procesamiento completado: analisis_$ID.txt"
-```
-
----
-
-### **5. Práctica: Automatización de un Flujo de Trabajo Bioinformático**
-
-#### **5.1. Descarga y Procesamiento de Datos de Secuenciación**
-- **Paso 1:** Descargar archivos FASTQ desde SRA.
-- **Paso 2:** Procesar los archivos FASTQ con herramientas bioinformáticas.
-- **Paso 3:** Generar un informe de análisis.
-
-#### **5.2. Ejemplo de Flujo de Trabajo Automatizado**
+#### **4.3. Ejemplo de Flujo de Trabajo Automatizado**
 ```bash
 #!/bin/bash
 # Flujo de trabajo automatizado
-IDS=("SRR123456" "SRR654321" "SRR987654")
+IDS=("SRR1972948" "SRR1972956" "SRR1972955")
 for ID in ${IDS[@]}
 do
   # Descargar archivo FASTQ
-  fastq-dump $ID
+  fastq-dump --split-files -X 10000 $ID
   
   # Procesar archivo FASTQ
   bio analyze $ID.fastq > analisis_$ID.txt
@@ -312,35 +405,3 @@ do
 done
 echo "Flujo de trabajo completado."
 ```
-
----
-
-### **6. Actividades Asincrónicas**
-
-#### **6.1. Creación de un Script para Descargar Datos de NCBI**
-- **Ejercicio:** Crear un script que busque y descargue secuencias de ADN de una especie específica utilizando `esearch` y `efetch`.
-
-#### **6.2. Automatización de un Flujo de Trabajo**
-- **Ejercicio:** Crear un script que descargue múltiples archivos FASTQ desde SRA, los procese con `bio`, y genere un informe de análisis.
-
----
-
-### **7. Recursos Adicionales**
-- **Bibliografía:**
-  - Blum, R., & Bresnahan, C. (2021). *Linux Command Line and Shell Scripting Bible*. Wiley. Capítulo 11.
-- **Documentación Oficial:**
-  - `fastq-dump`: [SRA Toolkit Documentation](https://ncbi.github.io/sra-tools/).
-  - `esearch` y `efetch`: [NCBI E-utilities Documentation](https://www.ncbi.nlm.nih.gov/books/NBK25499/).
-  - `bio`: [Documentación de la herramienta bio](https://bio-tools.org/).
-
----
-
-### **Conclusión**
-- **Resumen:** Los estudiantes habrán aprendido a utilizar Shell scripting para automatizar tareas comunes en bioinformática, integrando comandos como `fastq-dump`, `esearch`, `efetch`, y `bio`.
-- **Preguntas de Reflexión:**
-  - ¿Cómo puede la automatización con Shell scripting mejorar la eficiencia en el análisis bioinformático?
-  - ¿Qué otras tareas bioinformáticas podrían automatizarse utilizando scripts de Shell?
-
----
-
-Esta clase combina los conceptos teóricos de Shell scripting con la aplicación práctica en bioinformática, permitiendo a los estudiantes trabajar con datos biológicos reales y automatizar flujos de trabajo complejos.
