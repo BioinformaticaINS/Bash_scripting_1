@@ -356,8 +356,8 @@ echo "Descarga completada: $ID.fastq"
 ```bash
 #!/bin/bash
 # Buscar y descargar datos de NCBI
-TERM="Homo sapiens[Organism] AND RNA-Seq[All Fields]"
-esearch -db nucleotide -query "$TERM" | efetch -format fasta > datos.fasta
+QUERY="Homo sapiens[Organism] AND RNA-Seq[All Fields]"
+esearch -db nucleotide -query "$QUERY" | efetch -format fasta > datos.fasta
 echo "Datos descargados: datos.fasta"
 ```
 
